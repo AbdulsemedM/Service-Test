@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import '../../models/service_model.dart';
+import '../../../../app/utils/dialog_utils.dart';
 import '../../controllers/service_controller.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'add_service_modal.dart';
@@ -233,9 +234,15 @@ class ViewServiceDetailModal extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 controller.deleteService(serviceId);
-                controller.fetchServices(1, 10); // Refresh the list
-                Navigator.of(context).pop(); // Close the confirmation dialog
-                Navigator.of(context).pop(); // Close the detail modal
+                if (controller.isDeleted.value) {
+                  controller.fetchServices(1, 10); // Refresh the list
+                  Navigator.of(context).pop(); // Close the confirmation dialog
+                  Navigator.of(context).pop();
+                  displaySnack(
+                      context, 'Service deleted successfully', Colors.green);
+                } else {
+                  displaySnack(context, 'Service deletion failed', Colors.red);
+                }
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),

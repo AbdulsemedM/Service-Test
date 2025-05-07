@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:service_booking/app/utils/dialog_utils.dart';
 import 'package:service_booking/features/service_booking/controllers/service_controller.dart';
+import '../../../../app/app_button.dart';
+import '../../../../app/utils/app_colors.dart';
 import '../widgets/add_service_modal.dart';
 import '../widgets/service_widget.dart';
 import '../widgets/view_service_detail_modal.dart';
@@ -153,40 +156,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  flex: 2,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: selectedFilter,
-                        hint: const Text('Filter by'),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedFilter = newValue;
-                          });
+                    flex: 2,
+                    child: MyButton(
+                        backgroundColor: AppColors.primaryColor,
+                        onPressed: () {
+                          displaySnack(
+                              context, 'Filter button pressed', Colors.green);
                         },
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'rating',
-                            child: Text('Rating'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'category',
-                            child: Text('Category'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'price',
-                            child: Text('Price'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                        buttonText: const Text('Filter'))),
               ],
             ),
           ),

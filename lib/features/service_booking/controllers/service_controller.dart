@@ -13,6 +13,8 @@ class ServiceController extends GetxController {
   var service = Rxn<ServiceModel>();
   var isDeleted = false.obs;
   var searchQuery = ''.obs;
+  var isAddedLoading = false.obs;
+  var isUpdatedLoading = false.obs;
   var isAdded = false.obs;
   var isUpdated = false.obs;
   var currentPage = 1;
@@ -78,24 +80,29 @@ class ServiceController extends GetxController {
     }
   }
 
-  void addService(Map<String, dynamic> service) async {
+  Future<void> addService(Map<String, dynamic> service) async {
     try {
+      isAddedLoading.value = true;
       await apiProvider.addService(service);
+      isAddedLoading.value = false;
       isAdded.value = true;
     } catch (e) {
       error.value = e.toString();
-    } finally {
       isAdded.value = false;
+      isAddedLoading.value = false;
     }
   }
 
-  void editService(Map<String, dynamic> service, String id) async {
+  Future<void> editService(Map<String, dynamic> service, String id) async {
     try {
+      isUpdatedLoading.value = true;
       await apiProvider.editService(service, id);
+      isUpdatedLoading.value = false;
+      isUpdated.value = true;
     } catch (e) {
       error.value = e.toString();
-    } finally {
       isUpdated.value = false;
+      isUpdatedLoading.value = false;
     }
   }
 }

@@ -103,7 +103,10 @@ class _AddServiceModalState extends State<AddServiceModal> {
               _buildDateField(),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: _submit,
+                onPressed: controller.isAddedLoading.value ||
+                        controller.isUpdatedLoading.value
+                    ? null
+                    : _submit,
                 style: ElevatedButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
@@ -113,8 +116,12 @@ class _AddServiceModalState extends State<AddServiceModal> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
-                    widget.service == null ? 'Add Service' : 'Update Service'),
+                child: controller.isAddedLoading.value ||
+                        controller.isUpdatedLoading.value
+                    ? const CircularProgressIndicator()
+                    : Text(widget.service == null
+                        ? 'Add Service'
+                        : 'Update Service'),
               ),
             ],
           ),
@@ -221,27 +228,24 @@ class _AddServiceModalState extends State<AddServiceModal> {
       };
 
       if (widget.service != null) {
-        controller.editService(service, widget.service!.id);
-      } else {
-        controller.addService(service);
-      }
-
-      if (widget.service != null) {
+        await controller.editService(service, widget.service!.id);
         if (controller.isUpdated.value) {
+          Navigator.of(context).pop();
+          controller.fetchServices(1, 10); // Refresh the list
           displaySnack(context, 'Service updated successfully!', Colors.green);
         } else if (controller.error.isNotEmpty) {
           displaySnack(context, controller.error.value, Colors.red);
         }
       } else {
+        await controller.addService(service);
         if (controller.isAdded.value) {
+          controller.fetchServices(1, 10); // Refresh the list
+          Navigator.of(context).pop();
           displaySnack(context, 'Service added successfully!', Colors.green);
         } else if (controller.error.isNotEmpty) {
           displaySnack(context, controller.error.value, Colors.red);
         }
       }
-
-      controller.fetchServices(1, 10); // Refresh the list
-      Navigator.of(context).pop(); // Close the modal
     }
   }
 }
