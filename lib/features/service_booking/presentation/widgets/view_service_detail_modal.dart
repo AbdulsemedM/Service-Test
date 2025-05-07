@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 // import '../../models/service_model.dart';
 import '../../controllers/service_controller.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'add_service_modal.dart';
 import 'service_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -167,6 +168,15 @@ class ViewServiceDetailModal extends StatelessWidget {
                       IconButton(
                         onPressed: () {
                           Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (context) => Dialog(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: AddServiceModal(service: service),
+                              ),
+                            ),
+                          );
                         },
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.grey.withOpacity(0.1),

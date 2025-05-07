@@ -13,6 +13,7 @@ class ServiceController extends GetxController {
   var isDeleted = false.obs;
   var searchQuery = ''.obs;
   var isAdded = false.obs;
+  var isUpdated = false.obs;
 
   @override
   void onInit() {
@@ -63,6 +64,16 @@ class ServiceController extends GetxController {
       error.value = e.toString();
     } finally {
       isAdded.value = false;
+    }
+  }
+
+  void editService(Map<String, dynamic> service, String id) async {
+    try {
+      await apiProvider.editService(service, id);
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isUpdated.value = false;
     }
   }
 }

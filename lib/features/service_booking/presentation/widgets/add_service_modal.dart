@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:service_booking/app/utils/dialog_utils.dart';
 import '../../controllers/service_controller.dart';
 import '../../models/service_model.dart';
@@ -40,8 +41,17 @@ class _AddServiceModalState extends State<AddServiceModal> {
         TextEditingController(text: widget.service?.imageUrl ?? '');
     _ratingController =
         TextEditingController(text: widget.service?.rating.toString() ?? '');
-    _durationController =
-        TextEditingController(text: widget.service?.duration.toString() ?? '');
+    _durationController = TextEditingController(
+        text: widget.service?.duration.toString() != null
+            ? DateFormat('dd-MM-yyyy HH:mm:ss').format(
+                DateTime.fromMillisecondsSinceEpoch(
+                    int.parse(widget.service!.duration.toString())))
+            : '');
+    if (widget.service != null) {
+      _selectedDate = DateTime.fromMillisecondsSinceEpoch(
+          int.parse(widget.service!.duration.toString()));
+    }
+    print(_durationController.text);
   }
 
   @override
@@ -189,6 +199,10 @@ class _AddServiceModalState extends State<AddServiceModal> {
 
   void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
+      // Parse the date string from dd-MM-yyyy HH:mm:ss to DateTime
+      final DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm:ss');
+      final DateTime parsedDate = formatter.parse(_durationController.text);
+
       final Map<String, dynamic> service = {
         'name': _nameController.text,
         'category': _categoryController.text,
@@ -196,19 +210,31 @@ class _AddServiceModalState extends State<AddServiceModal> {
         'availability': _availabilityController.text,
         'imageUrl': _imageUrlController.text,
         'createdAt': DateTime.now().millisecondsSinceEpoch,
-        'duration':
-            DateTime.parse(_durationController.text).millisecondsSinceEpoch,
+        'duration': parsedDate.millisecondsSinceEpoch,
         'rating': double.parse(_ratingController.text),
       };
+      if (widget.service != null) {
+        controller.editService(service, widget.service!.id);
+      } else {
+        controller.addService(service);
+      }
 
-      controller.addService(service);
-
-      if (controller.isAdded.value) {
-        // Show success message
-        displaySnack(context, 'Service added successfully!', Colors.green);
-      } else if (controller.error.isNotEmpty) {
-        // Show error message
-        displaySnack(context, controller.error.value, Colors.red);
+      if (widget.service != null) {
+        if (controller.isUpdated.value) {
+          // Show success message
+          displaySnack(context, 'Service updated successfully!', Colors.green);
+        } else if (controller.error.isNotEmpty) {
+          // Show error message
+          displaySnack(context, controller.error.value, Colors.red);
+        }
+      } else {
+        if (controller.isAdded.value) {
+          // Show success message
+          displaySnack(context, 'Service added successfully!', Colors.green);
+        } else if (controller.error.isNotEmpty) {
+          // Show error message
+          displaySnack(context, controller.error.value, Colors.red);
+        }
       }
 
       controller.fetchServices(); // Refresh the list

@@ -68,4 +68,20 @@ class ApiProvider {
       throw Exception(e);
     }
   }
+
+  Future<String> editService(Map<String, dynamic> service, String id) async {
+    try {
+      final apiProvider = ProviderSetup.getApiProvider(ApiConstants.baseUrl);
+      final response =
+          await apiProvider.putRequest("/api/v1/service/$id", service);
+      if (response.statusCode == 200) {
+        return "Successfully updated service";
+      } else {
+        throw Exception('Failed to update service');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e);
+    }
+  }
 }
