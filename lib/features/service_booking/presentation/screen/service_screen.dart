@@ -15,6 +15,7 @@ class ServiceScreen extends StatefulWidget {
 class _ServiceScreenState extends State<ServiceScreen> {
   final ServiceController controller = Get.find<ServiceController>();
   final TextEditingController searchController = TextEditingController();
+  String? selectedFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-               showDialog(
+              showDialog(
                 context: context,
                 builder: (context) => const Dialog(
                   child: Padding(
@@ -33,7 +34,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     child: AddServiceModal(),
                   ),
                 ),
-                      );
+              );
             },
           ),
         ],
@@ -42,16 +43,61 @@ class _ServiceScreenState extends State<ServiceScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search Services',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                // Implement search logic
-                controller.fetchServices(); // Refresh services
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: 'Search Services',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      controller.searchQuery.value = value;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedFilter,
+                        hint: const Text('Filter by'),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedFilter = newValue;
+                          });
+                        },
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'rating',
+                            child: Text('Rating'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'category',
+                            child: Text('Category'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'price',
+                            child: Text('Price'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -65,10 +111,17 @@ class _ServiceScreenState extends State<ServiceScreen> {
               if (controller.error.isNotEmpty) {
                 return Center(child: Text(controller.error.value));
               }
+
+              var searchedServices = ServiceWidget.searchServices(
+                  controller.services, controller.searchQuery.value);
+
+              final filteredServices = ServiceWidget.filterServices(
+                  searchedServices, selectedFilter);
+
               return ListView.builder(
-                itemCount: controller.services.length,
+                itemCount: filteredServices.length,
                 itemBuilder: (context, index) {
-                  final service = controller.services[index];
+                  final service = filteredServices[index];
                   return GestureDetector(
                     onTap: () {
                       showDialog(

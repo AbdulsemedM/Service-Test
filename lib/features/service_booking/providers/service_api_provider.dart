@@ -52,4 +52,20 @@ class ApiProvider {
       throw Exception(e);
     }
   }
+
+  Future<String> addService(Map<String, dynamic> service) async {
+    try {
+      final apiProvider = ProviderSetup.getApiProvider(ApiConstants.baseUrl);
+      final response =
+          await apiProvider.postRequest("/api/v1/service", service);
+      if (response.statusCode == 201) {
+        return "Successfully added service";
+      } else {
+        throw Exception('Failed to add service');
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception(e);
+    }
+  }
 }

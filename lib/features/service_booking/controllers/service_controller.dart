@@ -11,6 +11,8 @@ class ServiceController extends GetxController {
   var error = ''.obs;
   var service = Rxn<ServiceModel>();
   var isDeleted = false.obs;
+  var searchQuery = ''.obs;
+  var isAdded = false.obs;
 
   @override
   void onInit() {
@@ -50,6 +52,17 @@ class ServiceController extends GetxController {
       error.value = e.toString();
     } finally {
       isDeleted.value = false;
+    }
+  }
+
+  void addService(Map<String, dynamic> service) async {
+    try {
+      await apiProvider.addService(service);
+      isAdded.value = true;
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isAdded.value = false;
     }
   }
 }

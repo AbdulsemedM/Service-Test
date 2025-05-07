@@ -61,6 +61,35 @@ class ServiceWidget extends StatelessWidget {
     );
   }
 
+  static List<ServiceModel> filterServices(
+      List<ServiceModel> services, String? filter) {
+    if (filter == null) return services;
+
+    switch (filter) {
+      case 'rating':
+        services.sort((a, b) => b.rating.compareTo(a.rating));
+        break;
+      case 'category':
+        services.sort((a, b) => a.category.compareTo(b.category));
+        break;
+      case 'price':
+        services.sort((a, b) => a.price.compareTo(b.price));
+        break;
+    }
+    return services;
+  }
+
+  static List<ServiceModel> searchServices(
+      List<ServiceModel> services, String query) {
+    if (query.isEmpty) return services;
+
+    return services.where((service) {
+      final serviceName = service.name.toLowerCase();
+      final searchQuery = query.toLowerCase();
+      return serviceName.contains(searchQuery);
+    }).toList();
+  }
+
   static Widget buildInfoRow(
     BuildContext context,
     IconData icon,

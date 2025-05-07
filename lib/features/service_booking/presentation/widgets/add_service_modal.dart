@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:service_booking/app/utils/dialog_utils.dart';
 import '../../controllers/service_controller.dart';
 import '../../models/service_model.dart';
 
@@ -67,7 +68,10 @@ class _AddServiceModalState extends State<AddServiceModal> {
             children: [
               Text(
                 widget.service == null ? 'Add New Service' : 'Edit Service',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(height: 16),
               _buildTextField(
@@ -95,6 +99,9 @@ class _AddServiceModalState extends State<AddServiceModal> {
                       const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: Text(
                     widget.service == null ? 'Add Service' : 'Update Service'),
@@ -180,26 +187,28 @@ class _AddServiceModalState extends State<AddServiceModal> {
     );
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
       final Map<String, dynamic> service = {
         'name': _nameController.text,
         'category': _categoryController.text,
-        'price': _priceController.text,
+        'price': int.parse(_priceController.text),
         'availability': _availabilityController.text,
         'imageUrl': _imageUrlController.text,
         'createdAt': DateTime.now().millisecondsSinceEpoch,
-        'duration': double.parse(_durationController.text),
+        'duration':
+            DateTime.parse(_durationController.text).millisecondsSinceEpoch,
         'rating': double.parse(_ratingController.text),
       };
-      print(service);
 
-      if (widget.service == null) {
-        // Add new service logic
-        // controller.addService(service);
-      } else {
-        // Update existing service logic
-        // controller.updateService(service);
+      controller.addService(service);
+
+      if (controller.isAdded.value) {
+        // Show success message
+        displaySnack(context, 'Service added successfully!', Colors.green);
+      } else if (controller.error.isNotEmpty) {
+        // Show error message
+        displaySnack(context, controller.error.value, Colors.red);
       }
 
       controller.fetchServices(); // Refresh the list
