@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../controllers/service_controller.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'service_widget.dart';
+import 'package:intl/intl.dart';
 
 class ViewServiceDetailModal extends StatelessWidget {
   final String serviceId;
@@ -140,9 +141,21 @@ class ViewServiceDetailModal extends StatelessWidget {
                   // Availability
                   ServiceWidget.buildInfoRow(
                     context,
-                    Icons.access_time,
+                    Icons.timelapse,
                     'Availability',
                     service.availability,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Duration
+                  ServiceWidget.buildInfoRow(
+                    context,
+                    Icons.access_time,
+                    'Duration',
+                    DateFormat('dd-MM-yyyy').format(
+                      DateTime.fromMillisecondsSinceEpoch(
+                          int.parse(service.duration.toString())),
+                    ),
                   ),
                   const SizedBox(height: 24),
 
