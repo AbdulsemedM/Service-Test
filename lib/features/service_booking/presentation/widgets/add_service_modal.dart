@@ -199,9 +199,15 @@ class _AddServiceModalState extends State<AddServiceModal> {
 
   void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Parse the date string from dd-MM-yyyy HH:mm:ss to DateTime
+      // Ensure the date string is in the correct format
       final DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm:ss');
-      final DateTime parsedDate = formatter.parse(_durationController.text);
+      DateTime parsedDate;
+      try {
+        parsedDate = formatter.parse(_durationController.text);
+      } catch (e) {
+        displaySnack(context, 'Invalid date format', Colors.red);
+        return;
+      }
 
       final Map<String, dynamic> service = {
         'name': _nameController.text,
@@ -213,6 +219,7 @@ class _AddServiceModalState extends State<AddServiceModal> {
         'duration': parsedDate.millisecondsSinceEpoch,
         'rating': double.parse(_ratingController.text),
       };
+
       if (widget.service != null) {
         controller.editService(service, widget.service!.id);
       } else {
@@ -221,23 +228,19 @@ class _AddServiceModalState extends State<AddServiceModal> {
 
       if (widget.service != null) {
         if (controller.isUpdated.value) {
-          // Show success message
           displaySnack(context, 'Service updated successfully!', Colors.green);
         } else if (controller.error.isNotEmpty) {
-          // Show error message
           displaySnack(context, controller.error.value, Colors.red);
         }
       } else {
         if (controller.isAdded.value) {
-          // Show success message
           displaySnack(context, 'Service added successfully!', Colors.green);
         } else if (controller.error.isNotEmpty) {
-          // Show error message
           displaySnack(context, controller.error.value, Colors.red);
         }
       }
 
-      controller.fetchServices(); // Refresh the list
+      controller.fetchServices(1, 10); // Refresh the list
       Navigator.of(context).pop(); // Close the modal
     }
   }

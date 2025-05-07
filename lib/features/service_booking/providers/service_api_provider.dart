@@ -4,10 +4,11 @@ import 'package:service_booking/providers/provider_setup.dart';
 import '../models/service_model.dart';
 
 class ApiProvider {
-  Future<List<ServiceModel>> fetchServices() async {
+  Future<List<ServiceModel>> fetchServices(int page, int size) async {
     try {
       final apiProvider = ProviderSetup.getApiProvider(ApiConstants.baseUrl);
-      final response = await apiProvider.getRequest("/api/v1/service");
+      final response = await apiProvider
+          .getRequest("/api/v1/service", params: {"page": page, "limit": size});
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         print("data");

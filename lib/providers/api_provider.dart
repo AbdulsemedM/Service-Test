@@ -18,12 +18,17 @@ class ApiProvider {
     required this.errorInterceptor,
     required this.loggingInterceptor,
   });
-  Future<http.Response> getRequest(String endpoint) async {
+  Future<http.Response> getRequest(String endpoint,
+      {Map<String, dynamic>? params}) async {
     final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
     final headers = await authInterceptor.getHeaders();
-
+    final queryParams =
+        params?.entries.map((e) => '${e.key}=${e.value}').join('&');
+    final urlWithParams =
+        queryParams != null ? '$url?$queryParams' : url.toString();
     try {
-      final response = await http.get(url, headers: headers);
+      final response =
+          await http.get(Uri.parse(urlWithParams), headers: headers);
       loggingInterceptor.logRequest(url.toString(), 'GET', headers, null);
       loggingInterceptor.logResponse(response);
       errorInterceptor.checkError(response);

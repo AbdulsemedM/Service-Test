@@ -21,21 +21,111 @@ class _ServiceScreenState extends State<ServiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Services'),
+        elevation: 0,
+        backgroundColor: Theme.of(context).primaryColor,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).primaryColor,
+                Theme.of(context).primaryColor.withOpacity(0.8),
+              ],
+            ),
+          ),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Services',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              'Find your perfect service',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
         actions: [
+          // Notifications button
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(
+              Icons.notifications_outlined,
+              color: Colors.white,
+            ),
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => const Dialog(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: AddServiceModal(),
+              // Handle notifications
+            },
+          ),
+          // Add service button with beautiful animation
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () {
+                  showGeneralDialog(
+                    context: context,
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(
+                          scale: animation,
+                          child: Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: AddServiceModal(),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    transitionDuration: const Duration(milliseconds: 300),
+                    barrierDismissible: true,
+                    barrierLabel: '',
+                    barrierColor: Colors.black54,
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(
+                        Icons.add,
+                        color: Colors.black87,
+                        size: 20,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Add',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
         ],
       ),
@@ -118,26 +208,43 @@ class _ServiceScreenState extends State<ServiceScreen> {
               final filteredServices = ServiceWidget.filterServices(
                   searchedServices, selectedFilter);
 
-              return ListView.builder(
-                itemCount: filteredServices.length,
-                itemBuilder: (context, index) {
-                  final service = filteredServices[index];
-                  return GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child:
-                                ViewServiceDetailModal(serviceId: service.id),
-                          ),
-                        ),
-                      );
-                    },
-                    child: ServiceWidget(service: service),
-                  );
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent &&
+                      !controller.isLoadingMore.value) {
+                    controller.loadMore();
+                  }
+                  return true;
                 },
+                child: ListView.builder(
+                  itemCount: filteredServices.length +
+                      (controller.isLoadingMore.value ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == filteredServices.length) {
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    final service = filteredServices[index];
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child:
+                                  ViewServiceDetailModal(serviceId: service.id),
+                            ),
+                          ),
+                        );
+                      },
+                      child: ServiceWidget(service: service),
+                    );
+                  },
+                ),
               );
             }),
           ),

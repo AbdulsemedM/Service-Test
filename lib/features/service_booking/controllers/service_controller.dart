@@ -7,6 +7,7 @@ class ServiceController extends GetxController {
 
   var services = <ServiceModel>[].obs;
   var isLoading = true.obs;
+  var isLoadingMore = false.obs;
   var isLoadingById = true.obs;
   var error = ''.obs;
   var service = Rxn<ServiceModel>();
@@ -14,22 +15,43 @@ class ServiceController extends GetxController {
   var searchQuery = ''.obs;
   var isAdded = false.obs;
   var isUpdated = false.obs;
+  var currentPage = 1;
+  final int pageSize = 10;
 
   @override
   void onInit() {
     super.onInit();
-    fetchServices();
+    fetchServices(currentPage, pageSize);
   }
 
-  void fetchServices() async {
+  void fetchServices(int page, int size) async {
     try {
-      isLoading.value = true;
-      final result = await apiProvider.fetchServices();
-      services.assignAll(result);
+      if (page == 1) {
+        isLoading.value = true;
+      } else {
+        isLoadingMore.value = true;
+      }
+      final result = await apiProvider.fetchServices(page, size);
+      if (page == 1) {
+        services.assignAll(result);
+      } else {
+        services.addAll(result);
+      }
+      if (result.isEmpty) {
+        currentPage = -1;
+      }
     } catch (e) {
       error.value = e.toString();
     } finally {
       isLoading.value = false;
+      isLoadingMore.value = false;
+    }
+  }
+
+  void loadMore() {
+    if (currentPage != -1 && !isLoadingMore.value) {
+      currentPage++;
+      fetchServices(currentPage, pageSize);
     }
   }
 

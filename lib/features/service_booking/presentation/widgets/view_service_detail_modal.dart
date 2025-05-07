@@ -233,7 +233,7 @@ class ViewServiceDetailModal extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 controller.deleteService(serviceId);
-                controller.fetchServices(); // Refresh the list
+                controller.fetchServices(1, 10); // Refresh the list
                 Navigator.of(context).pop(); // Close the confirmation dialog
                 Navigator.of(context).pop(); // Close the detail modal
               },
