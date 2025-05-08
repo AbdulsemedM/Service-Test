@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../models/service_model.dart';
 import 'package:shimmer/shimmer.dart';
@@ -145,8 +146,14 @@ class ServiceWidget extends StatelessWidget {
       );
     }
     return ListTile(
-      leading: Image.network(service.imageUrl,
-          width: 50, height: 50, fit: BoxFit.cover),
+      leading: CachedNetworkImage(
+        imageUrl: service.imageUrl,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+        // placeholder: (context, url) => const CircularProgressIndicator(),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      ),
       title: Text(service.name),
       subtitle: Text('\$${service.price} - ${service.category}'),
     );
