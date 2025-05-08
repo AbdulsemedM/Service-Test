@@ -3,7 +3,7 @@ import 'package:service_booking/configuration/api_constants.dart';
 import 'package:service_booking/providers/provider_setup.dart';
 import '../models/service_model.dart';
 
-class ApiProvider {
+class ServiceApiProvider {
   Future<List<ServiceModel>> fetchServices(int page, int size) async {
     try {
       final apiProvider = ProviderSetup.getApiProvider(ApiConstants.baseUrl);

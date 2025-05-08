@@ -212,13 +212,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           builder: (context) => Dialog(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child:
-                                  ViewServiceDetailModal(serviceId: service.id),
+                              child: ViewServiceDetailModal(serviceId: service.id),
                             ),
                           ),
                         );
                       },
-                      child: ServiceWidget(service: service),
+                      child: Hero(
+                        tag: 'serviceImage-${service.id}',
+                        child: ServiceWidget(service: service),
+                      ),
                     );
                   },
                 ),

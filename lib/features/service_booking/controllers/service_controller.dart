@@ -3,7 +3,7 @@ import '../models/service_model.dart';
 import '../providers/service_api_provider.dart';
 
 class ServiceController extends GetxController {
-  final ApiProvider apiProvider = ApiProvider();
+  final ServiceApiProvider apiProvider = ServiceApiProvider();
 
   var services = <ServiceModel>[].obs;
   var isLoading = true.obs;

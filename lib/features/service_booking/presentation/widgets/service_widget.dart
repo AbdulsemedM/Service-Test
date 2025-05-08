@@ -151,7 +151,6 @@ class ServiceWidget extends StatelessWidget {
         width: 50,
         height: 50,
         fit: BoxFit.cover,
-        // placeholder: (context, url) => const CircularProgressIndicator(),
         errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
       title: Text(service.name),
