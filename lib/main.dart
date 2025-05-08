@@ -11,9 +11,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ScreenConfig.init(context);
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/service',
+      title: 'Service Booking',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute: '/',
       getPages: AppPages.routes,
     );
   }

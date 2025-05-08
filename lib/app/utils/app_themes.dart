@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:service_booking/app/utils/app_colors.dart';
+import 'package:flutter/widgets.dart';
 
 class AppTheme {
   static ThemeData themeData() {
@@ -53,12 +54,13 @@ class AppTheme {
 }
 
 class ScreenConfig {
-  static late double screenWidth;
   static late double screenHeight;
+  static late double screenWidth;
 
   static void init(BuildContext context) {
-    screenWidth = MediaQuery.of(context).size.width;
-    screenHeight = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
+    screenHeight = size.height;
+    screenWidth = size.width;
   }
 }
 
