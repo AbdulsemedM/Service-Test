@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:service_booking/app/utils/dialog_utils.dart';
 import 'package:service_booking/features/service_booking/controllers/service_controller.dart';
 import '../../../../app/app_button.dart';
 import '../../../../app/utils/app_colors.dart';
+import '../../models/service_model.dart';
 import '../widgets/add_service_modal.dart';
 import '../widgets/service_widget.dart';
 import '../widgets/view_service_detail_modal.dart';
+import '../widgets/filter_service_modal.dart';
 
 class ServiceScreen extends StatefulWidget {
   const ServiceScreen({super.key});
@@ -19,6 +20,16 @@ class _ServiceScreenState extends State<ServiceScreen> {
   final ServiceController controller = Get.find<ServiceController>();
   final TextEditingController searchController = TextEditingController();
   String? selectedFilter;
+  List<ServiceModel> originalServices = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch services and update the original list
+    controller.fetchServices(1, 10).then((_) {
+      originalServices = controller.services.toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -159,14 +170,38 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                    flex: 2,
-                    child: MyButton(
-                        backgroundColor: AppColors.primaryColor,
-                        onPressed: () {
-                          displaySnack(
-                              context, 'Filter button pressed', Colors.green);
-                        },
-                        buttonText: const Text('Filter'))),
+                  flex: 2,
+                  child: MyButton(
+                    backgroundColor: AppColors.primaryColor,
+                    onPressed: () async {
+                      final result = await showDialog<Map<String, RangeValues>>(
+                        context: context,
+                        builder: (context) => const FilterServiceModal(
+                          minPrice: 0,
+                          maxPrice: 100,
+                          minRating: 0,
+                          maxRating: 100,
+                        ),
+                      );
+
+                      if (result != null) {
+                        final priceRange = result['priceRange']!;
+                        final ratingRange = result['ratingRange']!;
+                        // Apply filters to the original list of services
+                        controller.services.value =
+                            originalServices.where((service) {
+                          return service.price >= priceRange.start &&
+                              service.price <= priceRange.end &&
+                              service.rating >= ratingRange.start &&
+                              service.rating <= ratingRange.end;
+                        }).toList();
+                      }
+                    },
+                    buttonText: const Text('Filter',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
               ],
             ),
           ),
@@ -184,9 +219,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
               var searchedServices = ServiceWidget.searchServices(
                   controller.services, controller.searchQuery.value);
+              originalServices = searchedServices.toList();
 
               final filteredServices = ServiceWidget.filterServices(
                   searchedServices, selectedFilter);
+              originalServices = filteredServices.toList();
 
               return NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scrollInfo) {
@@ -215,7 +252,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           builder: (context) => Dialog(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
-                              child: ViewServiceDetailModal(serviceId: service.id),
+                              child:
+                                  ViewServiceDetailModal(serviceId: service.id),
                             ),
                           ),
                         );

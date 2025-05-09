@@ -26,7 +26,7 @@ class ServiceController extends GetxController {
     fetchServices(currentPage, pageSize);
   }
 
-  void fetchServices(int page, int size) async {
+  Future<void> fetchServices(int page, int size) async {
     try {
       if (page == 1) {
         isLoading.value = true;
