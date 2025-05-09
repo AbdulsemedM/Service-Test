@@ -25,106 +25,108 @@ class LoginWidget extends StatelessWidget {
       elevation: 8,
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset('assets/images/logo.png', width: 400, height: 150),
-            Hero(
-              tag: 'loginHero',
-              child: Text(
-                'Welcome Back!',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: AppColors.primaryTextColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset('assets/images/logo.png', width: 400, height: 150),
+              Hero(
+                tag: 'loginHero',
+                child: Text(
+                  'Welcome Back!',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                        color: AppColors.primaryTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  _buildTextField(
-                    controller: usernameController,
-                    label: 'Username',
-                    icon: Icons.person,
+              const SizedBox(height: 16),
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    _buildTextField(
+                      controller: usernameController,
+                      label: 'Username',
+                      icon: Icons.person,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildTextField(
+                      controller: passwordController,
+                      label: 'Password',
+                      icon: Icons.lock,
+                      obscureText: true,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return CircularProgressIndicator();
+                }
+                return ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      controller.login(
+                        usernameController.text,
+                        passwordController.text,
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    controller: passwordController,
-                    label: 'Password',
-                    icon: Icons.lock,
-                    obscureText: true,
+                  child: Text('Login'),
+                );
+              }),
+              Obx(() {
+                if (controller.errorMessage.isNotEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Text(
+                      controller.errorMessage.value,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        color: AppColors.secondaryDarkColor,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 24),
-            Obx(() {
-              if (controller.isLoading.value) {
-                return CircularProgressIndicator();
-              }
-              return ElevatedButton(
-                onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    controller.login(
-                      usernameController.text,
-                      passwordController.text,
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text('Login'),
-              );
-            }),
-            Obx(() {
-              if (controller.errorMessage.isNotEmpty) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Text(
-                    controller.errorMessage.value,
-                    style: TextStyle(color: Colors.red),
-                  ),
-                );
-              }
-              return SizedBox.shrink();
-            }),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                GestureDetector(
+              const SizedBox(width: 80),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: GestureDetector(
                   onTap: () {},
                   child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: AppColors.secondaryDarkColor,
-                      decoration: TextDecoration.underline,
-                    ),
+                    "Don't have an account? Sign Up",
+                    style: TextStyle(color: AppColors.secondaryDarkColor),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(width: 80),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: GestureDetector(
-                onTap: () {},
-                child: const Text(
-                  "Don't have an account? Sign Up",
-                  style: TextStyle(color: AppColors.secondaryDarkColor),
-                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
