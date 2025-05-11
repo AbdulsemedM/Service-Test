@@ -43,12 +43,12 @@ class _FilterServiceModalState extends State<FilterServiceModal> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Filter Services',
+              'Filter Services'.tr,
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 16),
             _buildRangeSlider(
-              label: 'Price Range',
+              label: 'Price Range'.tr,
               rangeValues: priceRange,
               min: 0,
               max: 100,
@@ -60,7 +60,7 @@ class _FilterServiceModalState extends State<FilterServiceModal> {
             ),
             const SizedBox(height: 16),
             _buildRangeSlider(
-              label: 'Rating Range',
+              label: 'Rating Range'.tr,
               rangeValues: ratingRange,
               min: 0,
               max: 100,
@@ -87,7 +87,7 @@ class _FilterServiceModalState extends State<FilterServiceModal> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Apply Filters'),
+              child: Text('Apply Filters'.tr),
             ),
           ],
         ),

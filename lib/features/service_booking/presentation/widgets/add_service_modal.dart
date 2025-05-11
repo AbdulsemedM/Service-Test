@@ -77,7 +77,7 @@ class _AddServiceModalState extends State<AddServiceModal> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                widget.service == null ? 'Add New Service' : 'Edit Service',
+                widget.service == null ? 'Add New Service'.tr : 'Edit Service'.tr,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold,
@@ -85,20 +85,20 @@ class _AddServiceModalState extends State<AddServiceModal> {
               ),
               const SizedBox(height: 16),
               _buildTextField(
-                  _nameController, 'Service Name', Icons.text_fields),
+                  _nameController, 'Service Name'.tr, Icons.text_fields),
               const SizedBox(height: 16),
-              _buildTextField(_categoryController, 'Category', Icons.category),
+              _buildTextField(_categoryController, 'Category'.tr, Icons.category),
               const SizedBox(height: 16),
-              _buildTextField(_priceController, 'Price', Icons.attach_money,
+              _buildTextField(_priceController, 'Price'.tr, Icons.attach_money,
                   isNumber: true),
               const SizedBox(height: 16),
-              _buildTextField(_ratingController, 'Rating', Icons.star,
+              _buildTextField(_ratingController, 'Rating'.tr, Icons.star,
                   isNumber: true),
               const SizedBox(height: 16),
               _buildTextField(
-                  _availabilityController, 'Availability', Icons.access_time),
+                  _availabilityController, 'Availability'.tr, Icons.access_time),
               const SizedBox(height: 16),
-              _buildTextField(_imageUrlController, 'Image URL', Icons.image),
+              _buildTextField(_imageUrlController, 'Image URL'.tr, Icons.image),
               const SizedBox(height: 16),
               _buildDateField(),
               const SizedBox(height: 24),
@@ -120,8 +120,8 @@ class _AddServiceModalState extends State<AddServiceModal> {
                         controller.isUpdatedLoading.value
                     ? const CircularProgressIndicator()
                     : Text(widget.service == null
-                        ? 'Add Service'
-                        : 'Update Service'),
+                        ? 'Add Service'.tr
+                        : 'Update Service'.tr),
               ),
             ],
           ),
@@ -137,7 +137,7 @@ class _AddServiceModalState extends State<AddServiceModal> {
               ? _selectedDate!.toLocal().toString().split(' ')[0]
               : ''),
       decoration: InputDecoration(
-        labelText: 'Duration',
+        labelText: 'Duration'.tr,
         prefixIcon: const Icon(Icons.calendar_today),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
@@ -145,7 +145,7 @@ class _AddServiceModalState extends State<AddServiceModal> {
       onTap: () => _showDatePicker(context),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please select a date';
+          return 'Please select a date'.tr;
         }
         return null;
       },
@@ -190,14 +190,14 @@ class _AddServiceModalState extends State<AddServiceModal> {
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter $label';
+          return 'Please enter $label'.tr;
         }
         if (isNumber && double.tryParse(value) == null) {
-          return 'Please enter a valid number';
+          return 'Please enter a valid number'.tr;
         }
         if (isRating &&
             (double.tryParse(value) == null || double.tryParse(value)! > 100)) {
-          return 'Please enter a valid rating';
+          return 'Please enter a valid rating'.tr;
         }
         return null;
       },
@@ -206,13 +206,12 @@ class _AddServiceModalState extends State<AddServiceModal> {
 
   void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Ensure the date string is in the correct format
       final DateFormat formatter = DateFormat('dd-MM-yyyy HH:mm:ss');
       DateTime parsedDate;
       try {
         parsedDate = formatter.parse(_durationController.text);
       } catch (e) {
-        displaySnack(context, 'Invalid date format', Colors.red);
+        displaySnack(context, 'Invalid date format'.tr, Colors.red);
         return;
       }
 
@@ -231,17 +230,17 @@ class _AddServiceModalState extends State<AddServiceModal> {
         await controller.editService(service, widget.service!.id);
         if (controller.isUpdated.value) {
           Navigator.of(context).pop();
-          controller.fetchServices(1, 10); // Refresh the list
-          displaySnack(context, 'Service updated successfully!', Colors.green);
+          controller.fetchServices(1, 10);
+          displaySnack(context, 'Service updated successfully!'.tr, Colors.green);
         } else if (controller.error.isNotEmpty) {
           displaySnack(context, controller.error.value, Colors.red);
         }
       } else {
         await controller.addService(service);
         if (controller.isAdded.value) {
-          controller.fetchServices(1, 10); // Refresh the list
+          controller.fetchServices(1, 10);
           Navigator.of(context).pop();
-          displaySnack(context, 'Service added successfully!', Colors.green);
+          displaySnack(context, 'Service added successfully!'.tr, Colors.green);
         } else if (controller.error.isNotEmpty) {
           displaySnack(context, controller.error.value, Colors.red);
         }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:service_booking/app/language_manager.dart';
 import '../../controllers/login_controller.dart';
 import '../../../../app/utils/app_colors.dart';
 
@@ -16,6 +17,53 @@ class LoginWidget extends StatelessWidget {
     required this.formKey,
   });
 
+  buildLanguageDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            backgroundColor: Colors.grey[200],
+            title: Text('Choose Language'.tr),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        child: Text(locale[index]['name']),
+                        onTap: () async {
+                          String selectedLocale = locale[index]['name'];
+                          LanguageManager preferences = LanguageManager();
+                          await preferences.setLanguage(selectedLocale);
+
+                          updateLanguage(locale[index]['locale']);
+                        },
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(
+                      color: Colors.grey,
+                    );
+                  },
+                  itemCount: locale.length),
+            ),
+          );
+        });
+  }
+
+  final List locale = [
+    {'name': 'English', 'locale': const Locale('en', 'US')},
+    {'name': 'Spanish', 'locale': const Locale('es', 'ES')},
+    {'name': 'Portuguese', 'locale': const Locale('pt', 'PT')},
+  ];
+  updateLanguage(Locale locale) async {
+    Get.back();
+    Get.updateLocale(locale);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -29,11 +77,30 @@ class LoginWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              GestureDetector(
+                onTap: () async {
+                  await buildLanguageDialog(context);
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "English".tr,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const Icon(Icons.arrow_drop_down)
+                    ],
+                  ),
+                ),
+              ),
               Image.asset('assets/images/logo.png', width: 400, height: 150),
               Hero(
                 tag: 'loginHero',
                 child: Text(
-                  'Welcome Back!',
+                  'Welcome Back!'.tr,
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                         color: AppColors.primaryTextColor,
                         fontWeight: FontWeight.bold,
@@ -47,13 +114,13 @@ class LoginWidget extends StatelessWidget {
                   children: [
                     _buildTextField(
                       controller: usernameController,
-                      label: 'Username',
+                      label: 'Username'.tr,
                       icon: Icons.person,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: passwordController,
-                      label: 'Password',
+                      label: 'Password'.tr,
                       icon: Icons.lock,
                       obscureText: true,
                     ),
@@ -83,7 +150,7 @@ class LoginWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('Login'),
+                  child: Text('Login'.tr),
                 );
               }),
               Obx(() {
@@ -104,9 +171,9 @@ class LoginWidget extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {},
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
+                    child: Text(
+                      'Forgot Password?'.tr,
+                      style: const TextStyle(
                         color: AppColors.secondaryDarkColor,
                         decoration: TextDecoration.underline,
                       ),
@@ -119,9 +186,9 @@ class LoginWidget extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: GestureDetector(
                   onTap: () {},
-                  child: const Text(
-                    "Don't have an account? Sign Up",
-                    style: TextStyle(color: AppColors.secondaryDarkColor),
+                  child: Text(
+                    "Don't have an account? Sign Up".tr,
+                    style: const TextStyle(color: AppColors.secondaryDarkColor),
                   ),
                 ),
               ),

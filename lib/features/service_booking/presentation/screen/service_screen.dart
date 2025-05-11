@@ -25,7 +25,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch services and update the original list
     controller.fetchServices(1, 10).then((_) {
       originalServices = controller.services.toList();
     });
@@ -54,16 +53,16 @@ class _ServiceScreenState extends State<ServiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Services',
-                style: TextStyle(
+              Text(
+                'Services'.tr,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
               Text(
-                'Find your perfect service',
+                'Find your perfect service'.tr,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.white.withOpacity(0.8),
@@ -83,7 +82,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
               // Handle notifications
             },
           ),
-          // Add service button with beautiful animation
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             decoration: BoxDecoration(
@@ -120,20 +118,21 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     barrierColor: Colors.black54,
                   );
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(
+                    children: [
+                      const Icon(
                         Icons.add,
                         color: Colors.black87,
                         size: 20,
                       ),
                       SizedBox(width: 4),
                       Text(
-                        'Add',
-                        style: TextStyle(
+                        'Add'.tr,
+                        style: const TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.w600,
                         ),
@@ -157,7 +156,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   child: TextField(
                     controller: searchController,
                     decoration: InputDecoration(
-                      labelText: 'Search Services',
+                      labelText: 'Search Services'.tr,
                       prefixIcon: const Icon(Icons.search),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -187,7 +186,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                       if (result != null) {
                         final priceRange = result['priceRange']!;
                         final ratingRange = result['ratingRange']!;
-                        // Apply filters to the original list of services
                         controller.services.value =
                             originalServices.where((service) {
                           return service.price >= priceRange.start &&
@@ -197,8 +195,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         }).toList();
                       }
                     },
-                    buttonText: const Text('Filter',
-                        style: TextStyle(
+                    buttonText: Text('Filter'.tr,
+                        style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
@@ -214,7 +212,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 );
               }
               if (controller.error.isNotEmpty) {
-                return Center(child: Text(controller.error.value));
+                return Center(child: Text("Something went wrong.".tr));
               }
 
               var searchedServices = ServiceWidget.searchServices(

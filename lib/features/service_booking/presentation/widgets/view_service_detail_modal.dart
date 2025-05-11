@@ -138,7 +138,7 @@ class ViewServiceDetailModal extends StatelessWidget {
                   ServiceWidget.buildInfoRow(
                     context,
                     Icons.category_outlined,
-                    'Category',
+                    'Category'.tr,
                     service.category,
                   ),
                   const SizedBox(height: 12),
@@ -147,7 +147,7 @@ class ViewServiceDetailModal extends StatelessWidget {
                   ServiceWidget.buildInfoRow(
                     context,
                     Icons.timelapse,
-                    'Availability',
+                    'Availability'.tr,
                     service.availability,
                   ),
                   const SizedBox(height: 12),
@@ -156,7 +156,7 @@ class ViewServiceDetailModal extends StatelessWidget {
                   ServiceWidget.buildInfoRow(
                     context,
                     Icons.access_time,
-                    'Duration',
+                    'Duration'.tr,
                     DateFormat('dd-MM-yyyy').format(
                       DateTime.fromMillisecondsSinceEpoch(
                           int.parse(service.duration.toString())),
