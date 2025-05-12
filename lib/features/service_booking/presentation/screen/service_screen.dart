@@ -212,7 +212,26 @@ class _ServiceScreenState extends State<ServiceScreen> {
                 );
               }
               if (controller.error.isNotEmpty) {
-                return Center(child: Text("Something went wrong.".tr));
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Something went wrong.".tr),
+                      const SizedBox(height: 16),
+                      MyButton(
+                        backgroundColor: AppColors.primaryColor,
+                        onPressed: () => controller.fetchServices(1, 10),
+                        buttonText: Text(
+                          'Reload'.tr,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
 
               var searchedServices = ServiceWidget.searchServices(
